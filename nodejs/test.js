@@ -7,11 +7,8 @@ var result = stun.startserver(3478);
 
 console.log("startserver returned: " + result);
 
-while (true)
-{
 
-    ;
-
+var loop = function(){
+  console.log("staying alive");
 }
-
-
+setInterval(loop,10000);

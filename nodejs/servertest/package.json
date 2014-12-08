@@ -1,0 +1,17 @@
+{
+  "name": "stun-test-client",
+  "version": "0.0.1",
+  "description": "Simple Client to Test the Stun Server",
+  "author": "formula1",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.10.1",
+    "ws": "~0.4.31",
+    "async": "~0.9.0",
+    "es6-promise": "~2.0.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

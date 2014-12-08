@@ -1,0 +1,22 @@
+{
+  "name": "stunt-test-client",
+  "version": "0.0.1",
+  "authors": [
+    "formula1"
+  ],
+  "description": "Simple Client to Test the Stun Server",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "latest",
+    "eventEmitter": "~4.2.9",
+    "es6-promise": "~2.0.0"
+  }
+}

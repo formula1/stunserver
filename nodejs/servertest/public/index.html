@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <script src="/bc/jquery" ></script>
+  <script src="/api.js"></script>
+  <script src="/WebRTCadapter.js"></script>
+  <script type="text/javascript">
+    jQuery(function($){
+      var net = new NetworkHost();
+      net.connect({"not":"important here"});
+			var peer;
+
+      net.on("userlist",function(list){
+        console.log(list);
+        var ue = $("#userlist");
+				ue.empty();
+        for(var i in list){
+          if(i == net.id) continue;
+          ue.append("<li class='user' id='"+i+"'><a href='#'>"+JSON.stringify(list[i])+"</a></li>");
+        }
+      });
+      $(document).on("click",".user a",function(e){
+				e.preventDefault();
+				console.log("offering");
+        var id = $(this).parent().attr("id");
+        net.offer(id).catch(console.log.bind(console, "error: "));
+      });
+      net.on("offer",function(message){
+        console.log("got offer");
+        net.offerAccept(message).catch(console.log.bind(console, "error: "));
+      });
+			net.on("ready",function(connection){
+        console.log(connection)
+        console.log(connection.add)
+        console.log(typeof connection.add)
+
+					peer = connection;
+					peer.add("chat", function(val){
+						$("#chat").prepend("<li>"+val+"</li>");
+					});
+          $("button").css("background-color","#0F0").text("Speak!");
+			});
+			$("#form").submit(function(e){
+				e.preventDefault();
+				if(!peer) return alert("Peer Connection is not ready yet");
+				var tx = $(this).find("textarea");
+				peer.trigger("chat",tx.val());
+				$("#chat").prepend("<li>"+tx.val()+"</li>");
+				tx.val("");
+			});
+    });
+  </script>
+	<style>
+		body{text-align:center;}
+		body>*{width:500px;margin:5px auto;}
+		form>button[type=submit]{display:block;width:100%;}
+	</style>
+</head>
+<body>
+<ul id="userlist"></ul>
+<ul id="chat"></ul>
+<form id="form" action="#">
+	<textarea></textarea>
+	<button style="background-color:#888" type="submit">Wait</button>
+</form>
+</body>
+</html>
