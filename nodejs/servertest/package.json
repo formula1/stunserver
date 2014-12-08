@@ -9,7 +9,8 @@
     "express": "^4.10.1",
     "ws": "~0.4.31",
     "async": "~0.9.0",
-    "es6-promise": "~2.0.0"
+    "es6-promise": "~2.0.0",
+    "bower": "latest"
   },
   "scripts": {
     "start": "node index.js"
