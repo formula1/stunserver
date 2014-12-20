@@ -1,5 +1,5 @@
 
-var stun = require("./build/Release/stunserver"),
+var stun = require("../build/Release/stunserver"),
 
 DEFAULT_STUN_PORT = 3478,
 
@@ -42,8 +42,8 @@ for (i = 0;i < perms.length;i++ ) {
   console.log("startserver" + JSON.stringify( perms[i] ) + "");
   result = stun.startserver.apply(stun, perms[i]);
   stun.stopserver();
-  console.log("returned: " + result)
-  console.log("\n\n")
+  console.log("returned: " + result);
+  console.log("\n\n");
 }
 
 setInterval(function() {}, 10000);

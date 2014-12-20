@@ -8,6 +8,7 @@
        "binding.cpp",
        "nodestun_object.cpp",
        "nodestun_args.cc",
+       "nodestun_auth.cc",
        "../common/logger.cpp",
        "../common/common.cpp",
        "../common/getmillisecondcounter.cpp",

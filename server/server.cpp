@@ -31,7 +31,8 @@ fHasAP(false),
 fHasAA(false),
 fMultiThreadedMode(false),
 fTCP(false),
-nMaxConnections(0) // zero means default
+nMaxConnections(0), // zero means default
+stunAuth(NULL)
 {
     ;
 }
@@ -52,9 +53,9 @@ CStunServer::~CStunServer()
 HRESULT CStunServer::AddSocket(TransportAddressSet* pTSA, SocketRole role, const CSocketAddress& addrListen, const CSocketAddress& addrAdvertise)
 {
     HRESULT hr = S_OK;
-    
+
     ASSERT(IsValidSocketRole(role));
-    
+
     Chk(_arrSockets[role].UDPInit(addrListen, role));
     ChkA(_arrSockets[role].EnablePktInfoOption(true));
 
@@ -69,13 +70,13 @@ HRESULT CStunServer::AddSocket(TransportAddressSet* pTSA, SocketRole role, const
         // I can't think of any case where addrListen != addrLocal
         // the ports will be different if addrListen.GetPort() is 0, but that
         // should never happen.
-        
+
         // but if the assert below fails, I want to know about it
         ASSERT(addrLocal.IsSameIP_and_Port(addrListen));
     }
 #endif
 
-    pTSA->set[role].fValid = true;    
+    pTSA->set[role].fValid = true;
     if (addrAdvertise.IsIPAddressZero() == false)
     {
         // set the TSA for this socket to what the configuration wants us to advertise this address for in ORIGIN and OTHER address attributes
@@ -86,7 +87,7 @@ HRESULT CStunServer::AddSocket(TransportAddressSet* pTSA, SocketRole role, const
     {
         pTSA->set[role].addr = addrListen; // use the socket's IP and port (OK if this is INADDR_ANY)
     }
-    
+
 Cleanup:
     return hr;
 }
@@ -100,11 +101,14 @@ HRESULT CStunServer::Initialize(const CStunServerConfig& config)
 
     // cleanup any thing that's going on now
     Shutdown();
-    
+
     // optional code: create an authentication provider and initialize it here (if you want authentication)
     // set the _spAuth member to reference it
-    // Chk(CYourAuthProvider::CreateInstanceNoInit(&_spAuth));
-    
+    if(config.stunAuth != NULL){
+      _spAuth = config.stunAuth;
+    }
+    //Chk(CYourAuthProvider::CreateInstanceNoInit(&_spAuth));
+
     // Create the sockets and initialize the TSA thing
     if (config.fHasPP)
     {
@@ -141,7 +145,7 @@ HRESULT CStunServer::Initialize(const CStunServerConfig& config)
         ChkIf(pThread==NULL, E_OUTOFMEMORY);
 
         _threads.push_back(pThread);
-        
+
         Chk(pThread->Init(_arrSockets, &tsa, _spAuth, (SocketRole)-1));
     }
     else
@@ -197,9 +201,9 @@ HRESULT CStunServer::Shutdown()
         _threads[index] = NULL;
     }
     _threads.clear();
-    
+
     _spAuth.ReleaseAndClear();
-    
+
     return S_OK;
 }
 
@@ -273,7 +277,3 @@ HRESULT CStunServer::Stop()
 
     return S_OK;
 }
-
-
-
-

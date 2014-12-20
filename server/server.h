@@ -22,21 +22,21 @@
 #include "stunsocketthread.h"
 #include "stunauth.h"
 #include "messagehandler.h"
-
+#include "stunauth.h"
 
 
 
 class CStunServerConfig
 {
 public:
-    
+
     bool fHasPP; // PP: Primary ip,   Primary port
     bool fHasPA; // PA: Primary ip,   Alternate port
     bool fHasAP; // AP: Alternate ip, Primary port
     bool fHasAA; // AA: Alternate ip, Alternate port
 
     bool fMultiThreadedMode;  // if true, one thread for each socket
-    
+
     bool fTCP; // if true, then use TCP instead of UDP
     uint32_t nMaxConnections; // only valid for TCP (on a per-thread basis)
 
@@ -44,9 +44,11 @@ public:
     CSocketAddress addrPA; // address for PA
     CSocketAddress addrAP; // address for AP
     CSocketAddress addrAA; // address for AA
-    
+
     CSocketAddress addrPrimaryAdvertised;    // public-IP for PP and PA (port is ignored)
     CSocketAddress addrAlternateAdvertised;  // public-IP for AP and AA (port is ignored)
+
+    IStunAuth* stunAuth;  // stunAuth that may be provided
 
     CStunServerConfig();
 };
@@ -72,7 +74,7 @@ private:
     friend class CObjectFactory<CStunServer>;
 
     CRefCountedPtr<IStunAuth> _spAuth;
-    
+
     HRESULT AddSocket(TransportAddressSet* pTSA, SocketRole role, const CSocketAddress& addrListen, const CSocketAddress& addrAdvertise);
 
 public:
@@ -89,4 +91,3 @@ public:
 
 
 #endif	/* SERVER_H */
-

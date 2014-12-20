@@ -52,19 +52,19 @@ var keys = [
   "alternate_port",
   "alternate_interface",
   "alternate_advertised"
-]
+];
 var tests = [];
 
 function addtest(arg,item,msg){
   tests.push(function(){
     var result;
     if(msg instanceof Error){
-      var result = 0;
+      result = 0;
       console.log(msg+": {"+item+":"+arg[item]+"}");
       try{
         stun.startGlobal(arg);
       }catch(e){
-        result = 1
+        result = 1;
         console.log("recieved error: "+e);
         console.log("\n");
       }
@@ -73,23 +73,24 @@ function addtest(arg,item,msg){
       }
     }else{
       console.log(msg+": {"+item+":"+arg[item]+"}");
-      var result = stun.startGlobal(arg);
+      result = stun.startGlobal(arg);
       if(!result){
         throw new Error("uncaught problem");
       }
     }
     stun.stopGlobal();
-    console.log("\n")
-  })
+    console.log("\n");
+  });
 }
 
 function test_r(curtest,isi){
-  if(curtest["mode"] == "basic" && /^alternate_/.test(keys[isi])){
+  if(curtest.mode == "basic" && /^alternate_/.test(keys[isi])){
     addtest(curtest,keys[isi-1],"skipping alternate in basic mode");
     return;
   }
+  var toadd;
   for(var i =0; i<poss[isi][0].length+1;i++){
-    var toadd = JSON.parse(JSON.stringify(curtest));
+    toadd = JSON.parse(JSON.stringify(curtest));
     toadd[keys[isi]] = (poss[isi][0][i])?poss[isi][0][i]:void(0);
     if(isi < poss.length-1){
       test_r(toadd, isi+1);
@@ -97,8 +98,8 @@ function test_r(curtest,isi){
       addtest(toadd,keys[isi],"should work");
     }
   }
-  for(var i =0; i<poss[isi][1].length;i++){
-    var toadd = JSON.parse(JSON.stringify(curtest));
+  for(i =0; i<poss[isi][1].length;i++){
+    toadd = JSON.parse(JSON.stringify(curtest));
     toadd[keys[isi]] = poss[isi][1][i];
     addtest(toadd,keys[isi],new Error("should throw error"));
   }
@@ -106,7 +107,7 @@ function test_r(curtest,isi){
 }
 test_r({verbosity:1},0);
 
-var stun = require("./build/Release/stunserver");
+var stun = require("../build/Release/stunserver");
 
 for(var i=0;i<tests.length;i++){
   tests[i]();
