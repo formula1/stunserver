@@ -7,8 +7,10 @@
       "sources" : [
        "binding.cpp",
        "nodestun_object.cpp",
-       "nodestun_args.cc",
-       "nodestun_auth.cc",
+       "nodestun_args.cpp",
+       "nodestun_generic.cpp",
+       "nodestun_auth.cpp",
+       "nodestun_authpoller.cpp",
        "../common/logger.cpp",
        "../common/common.cpp",
        "../common/getmillisecondcounter.cpp",

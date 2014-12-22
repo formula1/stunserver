@@ -7,23 +7,13 @@
 #include "socketaddress.h"
 #include "adapters.h"
 #include "resolvehostname.h"
-
 #include "nodestun_args.h"
+#include "nodestun_generic.h"
 
 
 using namespace v8;
 
 
-bool NodeStun_Args::throwErr(std::string err){
-  ThrowException(Exception::TypeError(String::New(err.c_str())));
-  return true;
-}
-
-std::string NodeStun_Args::v8str2stdstr(Handle<String> ori){
-  String::Utf8Value param1(ori);
-  std::string to = std::string(*param1);
-  return to;
-}
 bool NodeStun_Args::OneArgs(const Arguments& args, Local<Object> &option_map){
 
   if(args[0]->IsUndefined())
@@ -36,7 +26,7 @@ bool NodeStun_Args::OneArgs(const Arguments& args, Local<Object> &option_map){
   }
   else
   {
-    return NodeStun_Args::throwErr("The StunServer Configuration must be an Object");
+    return NS_G::throwErr("The StunServer Configuration must be an Object");
   }
   return false;
 }
@@ -92,14 +82,14 @@ bool NodeStun_Args::ThreeArgs(const Arguments& args, Local<Object> &option_map){
           Logging::LogMsg(LL_DEBUG,
           "Stun[%d].detail[%s] will be set",
           n,
-          NodeStun_Args::v8str2stdstr(port_options[nn]).c_str()
+          NS_G::v8str2stdstr(port_options[nn]).c_str()
           );
           option_map->Set(port_keys[n*3+nn], temp);
         }else{
           Logging::LogMsg(LL_DEBUG,
           "Stun[%d].detail[%s] will be default",
           n,
-          NodeStun_Args::v8str2stdstr(port_options[nn]).c_str()
+          NS_G::v8str2stdstr(port_options[nn]).c_str()
           );
         }
       }
@@ -149,7 +139,7 @@ bool NodeStun_Args::ThreeArgs(const Arguments& args, Local<Object> &option_map){
       {
         Logging::LogMsg(LL_DEBUG,
         "Extra.detail[%s]",
-        NodeStun_Args::v8str2stdstr(option_names[n]).c_str()
+        NS_G::v8str2stdstr(option_names[n]).c_str()
         );
         option_map->Set(option_names[n], temp);
       }
@@ -162,7 +152,7 @@ bool NodeStun_Args::ThreeArgs(const Arguments& args, Local<Object> &option_map){
   }
   else
   {
-    NodeStun_Args::throwErr("Extra Options can only be an object or a string");
+    NS_G::throwErr("Extra Options can only be an object or a string");
     return true;
   }
   return false;
@@ -198,10 +188,10 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsString())
     {
-      return NodeStun_Args::throwErr("Mode can only be an Integer or Undefined");
+      return NS_G::throwErr("Mode can only be an Integer or Undefined");
     }
 
-    tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+    tempstr = NS_G::v8str2stdstr(tempv8->ToString());
     if (tempstr == "basic")
     {
       mode = Basic;
@@ -212,7 +202,7 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
     }
     else
     {
-      return NodeStun_Args::throwErr("Mode must be \"full\" or \"basic\".");
+      return NS_G::throwErr("Mode must be \"full\" or \"basic\".");
     }
     Logging::LogMsg(LL_DEBUG,"Setting mode to: %s",tempstr.c_str());
   }
@@ -229,7 +219,7 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsNumber())
     {
-      return NodeStun_Args::throwErr("IP Family can only be a String or Undefined");
+      return NS_G::throwErr("IP Family can only be a String or Undefined");
     }
     tempint = tempv8->Int32Value();
     if (tempint == 4)
@@ -242,7 +232,7 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
     }
     else
     {
-      return NodeStun_Args::throwErr("IP Family argument must be 4 or 6");
+      return NS_G::throwErr("IP Family argument must be 4 or 6");
     }
     Logging::LogMsg(LL_DEBUG,"Setting IP Family to: %d",tempint);
   }
@@ -257,12 +247,12 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsString())
     {
-      return NodeStun_Args::throwErr("protocol can only be a String or Undefined");
+      return NS_G::throwErr("protocol can only be a String or Undefined");
     }
-    tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+    tempstr = NS_G::v8str2stdstr(tempv8->ToString());
     if ((tempstr != "udp") && (tempstr != "tcp"))
     {
-      return NodeStun_Args::throwErr("Protocol argument must be 'udp' or 'tcp'. 'tls' is not supported yet");
+      return NS_G::throwErr("Protocol argument must be 'udp' or 'tcp'. 'tls' is not supported yet");
     }
     config.fTCP = (tempstr == "tcp");
     Logging::LogMsg(LL_DEBUG,"Setting Protocol to: %s",tempstr.c_str());
@@ -279,18 +269,18 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsNumber())
     {
-      return NodeStun_Args::throwErr("Maximum connections can only be an Integer or Undefined");
+      return NS_G::throwErr("Maximum connections can only be an Integer or Undefined");
     }
     tempint = tempv8->Int32Value();
     if (config.fTCP == false)
     {
-      return NodeStun_Args::throwErr("Maximum connections parameter has no meaning in UDP mode. Did you mean to specify {\"protocol\":\"tcp\"} ?");
+      return NS_G::throwErr("Maximum connections parameter has no meaning in UDP mode. Did you mean to specify {\"protocol\":\"tcp\"} ?");
     }
     else
     {
       if(tempint < 1 || tempint > 100000)
       {
-        return NodeStun_Args::throwErr("Maximum connections must be between 1-100000");
+        return NS_G::throwErr("Maximum connections must be between 1-100000");
       }
     }
     config.nMaxConnections = tempint;
@@ -309,12 +299,12 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsNumber())
     {
-      return NodeStun_Args::throwErr("Primary Port can only be an Integer or Undefined");
+      return NS_G::throwErr("Primary Port can only be an Integer or Undefined");
     }
     tempint = tempv8->Int32Value();
     if((tempint < 0x0001) || (tempint > 0xffff))
     {
-      return NodeStun_Args::throwErr("Primary port value is invalid.  Value must be between 1-65535");
+      return NS_G::throwErr("Primary port value is invalid.  Value must be between 1-65535");
     }
     nPrimaryPort = tempint;
     Logging::LogMsg(LL_DEBUG,"Setting Primary Port to: %d",tempint);
@@ -331,12 +321,12 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsNumber())
     {
-      return NodeStun_Args::throwErr("Alternative Port can only be an Integer or Undefined");
+      return NS_G::throwErr("Alternative Port can only be an Integer or Undefined");
     }
     tempint = tempv8->Int32Value();
     if((tempint < 0x0001) || (tempint > 0xffff))
     {
-      return NodeStun_Args::throwErr("Alternative port value is invalid.  Value must be between 1-65535");
+      return NS_G::throwErr("Alternative port value is invalid.  Value must be between 1-65535");
     }
     nAltPort = tempint;
     Logging::LogMsg(LL_DEBUG,"Setting Alternate Port to: %d",tempint);
@@ -348,7 +338,7 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
 
   if (nPrimaryPort == nAltPort)
   {
-    return NodeStun_Args::throwErr("Primary port and alternate port must be different values");
+    return NS_G::throwErr("Primary port and alternate port must be different values");
   }
 
 
@@ -382,16 +372,16 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
     {
       if(!tempv8->IsString())
       {
-        return NodeStun_Args::throwErr("Mode can only be an String or Undefined");
+        return NS_G::throwErr("Mode can only be an String or Undefined");
       }
 
-      tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+      tempstr = NS_G::v8str2stdstr(tempv8->ToString());
 
       CSocketAddress addr;
       hr = ::GetSocketAddressForAdapter(family, tempstr.c_str(), port, &addr);
       if (FAILED (hr))
       {
-        return NodeStun_Args::throwErr("No matching primary adapter found");
+        return NS_G::throwErr("No matching primary adapter found");
       }
       config.addrPP = addr;
       config.fHasPP = true;
@@ -409,20 +399,20 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
     // so if one isn't specified, it's best guess - just avoid duplicates
     if (fHasAtLeastTwoAdapters == false)
     {
-      return NodeStun_Args::throwErr("There does not appear to be two or more unique IP addresses to run in full mode");
+      return NS_G::throwErr("There does not appear to be two or more unique IP addresses to run in full mode");
     }
     tempv8 = option_map->Get(String::NewSymbol("primary_interface"));
     if (!tempv8->IsUndefined())
     {
       if(!tempv8->IsString())
       {
-        return NodeStun_Args::throwErr("Primary Interface can only be an String or Undefined");
+        return NS_G::throwErr("Primary Interface can only be an String or Undefined");
       }
-      tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+      tempstr = NS_G::v8str2stdstr(tempv8->ToString());
       hr = GetSocketAddressForAdapter(family, tempstr.c_str(), 0, &addrPrimary);
       if(FAILED(hr))
       {
-        return NodeStun_Args::throwErr("Failed to get Socket address for Primary Interface");
+        return NS_G::throwErr("Failed to get Socket address for Primary Interface");
       }
       Logging::LogMsg(LL_DEBUG,"Setting Primary Interface to: %s",tempstr.c_str());
     }
@@ -442,7 +432,7 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
       }
       else
       {
-        return NodeStun_Args::throwErr("Failed to find a Socket for Primary Interface");
+        return NS_G::throwErr("Failed to find a Socket for Primary Interface");
       }
       Logging::LogMsg(LL_DEBUG,"Primary Interface will be default");
     }
@@ -452,13 +442,13 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
     {
       if(!tempv8->IsString())
       {
-        return NodeStun_Args::throwErr("Alternate Interface can only be an String or Undefined");
+        return NS_G::throwErr("Alternate Interface can only be an String or Undefined");
       }
-      tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+      tempstr = NS_G::v8str2stdstr(tempv8->ToString());
       hr = GetSocketAddressForAdapter(family, tempstr.c_str(), 0, &addrAlternate);
       if(FAILED(hr))
       {
-        return NodeStun_Args::throwErr("Failed to get Socket address for Alternate Interface");
+        return NS_G::throwErr("Failed to get Socket address for Alternate Interface");
       }
       Logging::LogMsg(LL_DEBUG,"Setting Alternate Interface to: %s",tempstr.c_str());
     }
@@ -475,14 +465,14 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
         {
           refstr2 = refstr2.substr(0, x);
         }
-        return NodeStun_Args::throwErr("Failed to find a Socket for Alternate Interface");
+        return NS_G::throwErr("Failed to find a Socket for Alternate Interface");
       }
       Logging::LogMsg(LL_DEBUG,"Alternate Interface will be default");
     }
 
     if  (addrPrimary.IsSameIP(addrAlternate))
     {
-      return NodeStun_Args::throwErr("Primary interface and Alternate Interface appear to have the same IP address. Full mode requires two IP addresses that are unique");
+      return NS_G::throwErr("Primary interface and Alternate Interface appear to have the same IP address. Full mode requires two IP addresses that are unique");
     }
 
 
@@ -513,13 +503,13 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsString())
     {
-      return NodeStun_Args::throwErr("Primary Advertised can only be an String or Undefined");
+      return NS_G::throwErr("Primary Advertised can only be an String or Undefined");
     }
-    tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+    tempstr = NS_G::v8str2stdstr(tempv8->ToString());
     hr = ::NumericIPToAddress(family, tempstr.c_str(), &config.addrPrimaryAdvertised);
     if (FAILED(hr))
     {
-      return NodeStun_Args::throwErr("Primary Advertised is not a valid IP address string");
+      return NS_G::throwErr("Primary Advertised is not a valid IP address string");
     }
     Logging::LogMsg(LL_DEBUG,"Setting Primary Advertised to: %s",tempstr.c_str());
   }
@@ -533,17 +523,17 @@ bool NodeStun_Args::Object2Config(Local<Object> &option_map, CStunServerConfig& 
   {
     if(!tempv8->IsString())
     {
-      return NodeStun_Args::throwErr("Alternate Advertised can only be an String or Undefined");
+      return NS_G::throwErr("Alternate Advertised can only be an String or Undefined");
     }
-    tempstr = NodeStun_Args::v8str2stdstr(tempv8->ToString());
+    tempstr = NS_G::v8str2stdstr(tempv8->ToString());
     if (mode != Full)
     {
-      return NodeStun_Args::throwErr("Cannot set Alternate Advertised unless {mode:\"full\"}");
+      return NS_G::throwErr("Cannot set Alternate Advertised unless {mode:\"full\"}");
     }
     hr = ::NumericIPToAddress(family, tempstr.c_str(), &config.addrAlternateAdvertised);
     if (FAILED(hr))
     {
-      return NodeStun_Args::throwErr("Alternate Advertised is not a valid IP address string");
+      return NS_G::throwErr("Alternate Advertised is not a valid IP address string");
     }
     Logging::LogMsg(LL_DEBUG,"Setting Alternate Advertised to: %d",tempint);
   }

@@ -1,15 +1,19 @@
 #ifndef NODESTUN_AUTH_PROVIDER
 #define NODESTUN_AUTH_PROVIDER
 
+#include <node.h>
 #include "commonincludes.hpp"
 #include "stunauth.h"
-#include <node.h>
+#include "nodestun_authpoller.h"
 
-class NodeStun_Auth : public IStunAuth {
+
+class NodeStun_Auth : public IStunAuth, public CBasicRefCount{
+  virtual HRESULT DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse* pResponse);
 public:
   NodeStun_Auth(v8::Handle<v8::Object> stun);
-  virtual HRESULT DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse* pResponse);
   v8::Handle<v8::Object> server_;
+  ADDREF_AND_RELEASE_IMPL();
 };
+
 
 #endif

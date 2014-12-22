@@ -14,9 +14,10 @@ NodeStun::NodeStun (CStunServerConfig config, Handle<Object> nt)
   : instance_config_(config)
   , NodeThis(nt)
   , instance_server_(NULL)
-  , idler(NULL)
+  , idler()
   , stunAuth(NULL)
 {
+  idler.data = this;
   stunAuth = new NodeStun_Auth(NodeThis);
 }
 
@@ -27,8 +28,7 @@ NodeStun::~NodeStun() {
     instance_server_->Shutdown();
     instance_server_->Release();
     instance_server_ = NULL;
-    uv_idle_stop(idler);
-    idler = NULL;
+    uv_idle_stop(&idler);
   }
 }
 
@@ -107,11 +107,20 @@ Handle<Value> NodeStun::Start(const Arguments& args) {
     ThrowException(Exception::TypeError(String::New("server did not start")));
     return scope.Close(Boolean::New(false));
   }
+  /*
+   = uv_work_t* baton = new uv_work_t();
+  baton->data = this;
+  int status = uv_queue_work(uv_default_loop(), baton, StaticWork, StaticAfter);
+
+  And then in the static methods
+
+  test* myobj = static_cast<test>(req->data);
+  myobj->Work();
+  */
 
   uv_idle_init(uv_default_loop(), &obj->idler);
-  uv_idle_start(&obj->idler, &obj->DoNothing);
+  uv_idle_start(&obj->idler, DoNothing);
 
-  return 0;
   return scope.Close(Boolean::New(true));
 }
 
@@ -139,7 +148,7 @@ Handle<Value> NodeStun::AbstractThrow(const Arguments& args){
 }
 
 void NodeStun::DoNothing(uv_idle_t* handle, int status) {
-  if(instance_config_.verbosity > 5){
+  if(Logging::GetLogLevel() > 5){
     printf("Doing nothing");
   }
 }

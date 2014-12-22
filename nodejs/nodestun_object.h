@@ -19,10 +19,10 @@ private:
   static v8::Handle<v8::Value> Stop(const v8::Arguments& args);
   static v8::Handle<v8::Value> AbstractThrow(const v8::Arguments& args);
   static v8::Persistent<v8::Function> constructor;
-  void DoNothing(uv_idle_t* handle, int status);
+  static void DoNothing(uv_idle_t* handle, int status);
   CStunServerConfig instance_config_;
   CStunServer* instance_server_;
-  uv_idle_t* idler;
+  uv_idle_t idler;
   NodeStun_Auth* stunAuth;
   v8::Handle<v8::Object> NodeThis;
 };
