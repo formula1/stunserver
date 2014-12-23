@@ -860,12 +860,8 @@ HRESULT CTCPServer::Initialize(const CStunServerConfig& config)
     // optional code: create an authentication provider and initialize it here (if you want authentication)
     // set the _spAuth member to reference it
     // Chk(CYourAuthProvider::CreateInstanceNoInit(&_spAuth));
-    if(config.stunAuth != NULL){
-      Logging::LogMsg(LL_DEBUG,"We have stunAuth TCP");
-      *_spAuth = *config.stunAuth;
-    }else{
-      Logging::LogMsg(LL_DEBUG,"We don't stunAuth TCP");
-    }
+    _spAuth = config.stunAuth;
+    Logging::LogMsg(LL_DEBUG,"We %s have stunAuth UDP", (_spAuth != NULL)?"do":"do not");
 
 
     // tsaHandler is sort of a hack for TCP.  It's really just a glorified indication to the the

@@ -48,7 +48,7 @@ public:
     CSocketAddress addrPrimaryAdvertised;    // public-IP for PP and PA (port is ignored)
     CSocketAddress addrAlternateAdvertised;  // public-IP for AP and AA (port is ignored)
 
-    IStunAuth* stunAuth;  // stunAuth that may be provided
+    CRefCountedPtr<IStunAuth> stunAuth;  // stunAuth that may be provided
 
     CStunServerConfig();
 };

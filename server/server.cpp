@@ -96,7 +96,6 @@ HRESULT CStunServer::Initialize(const CStunServerConfig& config)
 {
     HRESULT hr = S_OK;
     int socketcount = 0;
-    CRefCountedPtr<IStunAuth> _spAuth;
     TransportAddressSet tsa = {};
 
     // cleanup any thing that's going on now
@@ -104,12 +103,8 @@ HRESULT CStunServer::Initialize(const CStunServerConfig& config)
 
     // optional code: create an authentication provider and initialize it here (if you want authentication)
     // set the _spAuth member to reference it
-    if(config.stunAuth != NULL){
-      Logging::LogMsg(LL_DEBUG,"We have stunAuth UDP");
-      *_spAuth = *config.stunAuth;
-    }else{
-      Logging::LogMsg(LL_DEBUG,"We don't stunAuth UDP");
-    }
+    _spAuth = config.stunAuth;
+    Logging::LogMsg(LL_DEBUG,"We %s have stunAuth UDP", (_spAuth != NULL)?"do":"do not");
     //Chk(CYourAuthProvider::CreateInstanceNoInit(&_spAuth));
 
     // Create the sockets and initialize the TSA thing
