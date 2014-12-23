@@ -9,5 +9,6 @@ stunclient
 stunserver
 stuntestcode
 node_modules
+./*.log
 
 nodejs/build
