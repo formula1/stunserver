@@ -56,7 +56,6 @@ HRESULT CStunRequestHandler::ProcessRequest(const StunMessageIn& msgIn, StunMess
     ChkIfA(msgIn.pReader->GetState() != CStunMessageReader::BodyValidated, E_UNEXPECTED);
 
     msgOut.spBufferOut->SetSize(0);
-    Logging::LogMsg(LL_VERBOSE, "pAuth");
 
     // build the context object to pass around this "C" type code environment
     handler._pAuth = pAuth;
@@ -127,7 +126,6 @@ HRESULT CStunRequestHandler::ProcessRequestImpl()
     }
 
 
-    Logging::LogMsg(LL_VERBOSE, "validateA");
     if (_error.errorcode == 0)
     {
         hrResult = ValidateAuth(); // returns S_OK if _pAuth is NULL

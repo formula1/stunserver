@@ -38,5 +38,7 @@ HRESULT NodeStun_Auth::DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse
 {
   Logging::LogMsg(LL_VERBOSE, "inside");
   Authenticator auth;
-  return auth.SendAndWait(pAuthAttributes, pResponse,server_);
+  Handle<Function> fn = Handle<Function>::Cast(server_->Get(String::NewSymbol("doAuth")));
+  Logging::LogMsg(LL_DEBUG,"doauthcheck");
+  return auth.SendAndWait(pAuthAttributes, pResponse,fn);
 }

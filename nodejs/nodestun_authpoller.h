@@ -15,9 +15,9 @@ public:
   AuthAttributes request_;
   AuthResponse response_;
   HRESULT SendAndWait(
-  AuthAttributes* request,
-  AuthResponse* response,
-  v8::Handle<v8::Object> sender
+    AuthAttributes* request,
+    AuthResponse* response,
+    v8::Handle<v8::Function> sender
   );
   static v8::Handle<v8::Value> onNodeAuthCallback(const v8::Arguments& args);
 };

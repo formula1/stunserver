@@ -33,12 +33,12 @@ using namespace v8;
 HRESULT Authenticator::SendAndWait(
   AuthAttributes* request,
   AuthResponse* response,
-  Handle<Object> sender
+  Handle<Function> sender
 )
 {
   _isCompleted = false;
 
-  Handle<Object> AuthReq = Object::New();
+  Local<Object> AuthReq = Object::New();
   AuthReq->Set(String::NewSymbol("user"), String::New(request_.szUser));
   AuthReq->Set(String::NewSymbol("realm"), String::New(request_.szRealm));
   AuthReq->Set(String::NewSymbol("nonce"), String::New(request_.szNonce));
@@ -46,22 +46,21 @@ HRESULT Authenticator::SendAndWait(
   AuthReq->Set(String::NewSymbol("integrity"), Boolean::New(request_.fMessageIntegrityPresent));
   // attributes in the request
 
-  Handle<Object> AuthRes = Object::New();
+  Local<Object> AuthRes = Object::New();
   AuthRes->Set(String::NewSymbol("response_code"), Number::New(0));
   AuthRes->Set(String::NewSymbol("is_short_term"), Boolean::New(true));
   AuthRes->Set(String::NewSymbol("password"), String::New("password"));
   AuthRes->Set(String::NewSymbol("realm"), String::New("realm"));
   AuthRes->Set(String::NewSymbol("nonce"), String::New("private nonce"));
 
-  Handle<Function> Callback = FunctionTemplate::New(onNodeAuthCallback)->GetFunction();
+  Local<Function> Callback = FunctionTemplate::New(onNodeAuthCallback)->GetFunction();
   this->Wrap(Callback);
-  Handle<Value> args[3];
+  Local<Value> args[3];
   args[0] = AuthReq;
   args[1] = AuthRes;
   args[2] = Callback;
-
-  Handle<Function> fn = Handle<Function>::Cast(sender->Get(String::NewSymbol("doAuth")));
-  fn->Call(sender,3,args);
+  Logging::LogMsg(LL_DEBUG,"about to auth");
+  sender->Call(sender,3,args);
 
   pthread_mutex_lock(&_mutex);
   while (_isCompleted == false)
