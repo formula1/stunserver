@@ -1,6 +1,6 @@
 var exec = require("child_process").exec;
 
-var stun = require("../build/Release/stunserver");
+var stun = require(__dirname+"/../build/Release/stunserver");
 
 var num = 5;
 var baseport = 3000;

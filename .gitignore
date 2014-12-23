@@ -8,5 +8,6 @@ callgrind.out.*
 stunclient
 stunserver
 stuntestcode
+node_modules
 
 nodejs/build

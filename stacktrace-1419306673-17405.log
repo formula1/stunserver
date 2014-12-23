@@ -1,0 +1,11 @@
+PID 17405 received SIGSEGV for address: 0x10
+/home/sam/Programming/node_apps/SilkServer/stun-server/node_modules/segfault-handler/build/Release/segfault-handler.node(+0x10e5)[0x7f171ddb70e5]
+/lib/x86_64-linux-gnu/libpthread.so.0(+0x10340)[0x7f171e38f340]
+/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN19CStunRequestHandler12ValidateAuthEv+0xe2)[0x7f171dbaa232]
+/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN19CStunRequestHandler18ProcessRequestImplEv+0x108)[0x7f171dbaa978]
+/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN19CStunRequestHandler14ProcessRequestERK13StunMessageInR14StunMessageOutP19TransportAddressSetP9IStunAuth+0xf6)[0x7f171dbaaac6]
+/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN17CStunSocketThread29ProcessRequestAndSendResponseEv+0x97)[0x7f171dba1e07]
+/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN17CStunSocketThread3RunEv+0x1bb)[0x7f171dba205b]
+/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN17CStunSocketThread14ThreadFunctionEPv+0x9)[0x7f171dba20a9]
+/lib/x86_64-linux-gnu/libpthread.so.0(+0x8182)[0x7f171e387182]
+/lib/x86_64-linux-gnu/libc.so.6(clone+0x6d)[0x7f171e0b3efd]

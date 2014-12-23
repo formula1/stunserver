@@ -849,7 +849,7 @@ void CTCPServer::InitTSA(TransportAddressSet* pTSA, SocketRole role, bool fValid
 
 }
 
-HRESULT CTCPServer::Initialize(CStunServerConfig& config)
+HRESULT CTCPServer::Initialize(const CStunServerConfig& config)
 {
     HRESULT hr = S_OK;
     TransportAddressSet tsaListenAll;
@@ -862,7 +862,7 @@ HRESULT CTCPServer::Initialize(CStunServerConfig& config)
     // Chk(CYourAuthProvider::CreateInstanceNoInit(&_spAuth));
     if(config.stunAuth != NULL){
       Logging::LogMsg(LL_DEBUG,"We have stunAuth TCP");
-      _spAuth = config.stunAuth;
+      *_spAuth = *config.stunAuth;
     }else{
       Logging::LogMsg(LL_DEBUG,"We don't stunAuth TCP");
     }

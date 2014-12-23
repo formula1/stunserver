@@ -92,7 +92,7 @@ Cleanup:
     return hr;
 }
 
-HRESULT CStunServer::Initialize(CStunServerConfig& config)
+HRESULT CStunServer::Initialize(const CStunServerConfig& config)
 {
     HRESULT hr = S_OK;
     int socketcount = 0;
@@ -106,7 +106,7 @@ HRESULT CStunServer::Initialize(CStunServerConfig& config)
     // set the _spAuth member to reference it
     if(config.stunAuth != NULL){
       Logging::LogMsg(LL_DEBUG,"We have stunAuth UDP");
-      _spAuth = config.stunAuth;
+      *_spAuth = *config.stunAuth;
     }else{
       Logging::LogMsg(LL_DEBUG,"We don't stunAuth UDP");
     }

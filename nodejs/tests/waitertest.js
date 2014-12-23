@@ -1,11 +1,24 @@
+var cluster = require("cluster");
 
-var stun = require("../build/Release/stunserver");
 
+if (cluster.isMaster) {
+  cluster.fork();
 
-var stunserver = new stun.StunServer({
-  protocol: "tcp",
-  mode: "basic",
-  verbosity:5
-});
+  cluster.on("exit",function(worker, code, signal) {
+    throw new Error("the server should not be exiting");
+  });
+  setTimeout(function(){
+    console.log("stun server stays alive");
+    process.exit();
+  },5000);
+}else{
+  var stun = require(__dirname+"/../build/Release/stunserver");
 
-stunserver.start();
+  var stunserver = new stun.StunServer({
+    protocol: "tcp",
+    mode: "basic",
+    verbosity:5
+  });
+
+  stunserver.start();
+}

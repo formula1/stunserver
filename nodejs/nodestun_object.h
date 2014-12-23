@@ -10,7 +10,7 @@ class NodeStun : public node::ObjectWrap {
 public:
   static void Init(v8::Handle<v8::Object> exports);
   NodeStun_Auth* stunAuth;
-  
+
 private:
   NodeStun(CStunServerConfig config, v8::Handle<v8::Object> nt);
   ~NodeStun();
@@ -21,6 +21,7 @@ private:
   static v8::Handle<v8::Value> AbstractThrow(const v8::Arguments& args);
   static v8::Persistent<v8::Function> constructor;
   static void DoNothing(uv_idle_t* handle, int status);
+  NodeStun_Auth GetAuth();
   CStunServerConfig instance_config_;
   CStunServer* instance_server_;
   uv_idle_t idler;

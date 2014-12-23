@@ -1,6 +1,9 @@
 var exec = require("child_process").exec;
+var SegfaultHandler = require('segfault-handler');
 
-var stun = require("../build/Release/stunserver");
+SegfaultHandler.registerHandler();
+
+var stun = require(__dirname+"/../build/Release/stunserver");
 
 var stunserver = new stun.StunServer({
   protocol: "tcp",
@@ -11,20 +14,24 @@ stunserver.start();
 
 var authcbs = [
   function(AuthReq,AuthRes,next){
+    console.log("args: "+arguments.length);
+    var args = Array.prototype.slice.call(arguments,0);
     process.nextTick(function(){
-      console.log(JSON.stringify(AuthRes)+1);
+      console.log(JSON.stringify(args)+1);
       next(AuthRes);
     });
   },
   function(AuthReq,AuthRes,next){
+    var args = Array.prototype.slice.call(arguments,0);
     process.nextTick(function(){
-      console.log(JSON.stringify(AuthRes)+2);
+      console.log(JSON.stringify(args)+2);
       next(AuthRes);
     });
   },
   function(AuthReq,AuthRes,next){
+    var args = Array.prototype.slice.call(arguments,0);
     process.nextTick(function(){
-      console.log(JSON.stringify(AuthRes)+3);
+      console.log(JSON.stringify(args)+3);
       next(AuthRes);
     });
   },

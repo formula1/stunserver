@@ -1,0 +1,31 @@
+{
+  "name": "stuntman",
+  "version": "1.0.0",
+  "description": "Node bindings for StuntMan",
+  "main": "nodejs/build/Release/stunserver.node",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/formula1/stunserver.git"
+  },
+  "keywords": [
+    "stun",
+    "webrtc"
+  ],
+  "scripts": {
+    "install": "node-gyp rebuild --directory=nodejs",
+    "test": "npm run test-alive && npm run test-multi && npm run test-auth && npm run test-args",
+    "test-alive": "node nodejs/tests/waitertest",
+    "test-multi": "node nodejs/tests/multi_instance",
+    "test-auth": "node nodejs/tests/authtest",
+    "test-args": "node nodejs/tests/test"
+  },
+  "author": "",
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/formula1/stunserver/issues"
+  },
+  "homepage": "https://github.com/formula1/stunserver"
+}

@@ -1,5 +1,5 @@
 
-var stun = require("../build/Release/stunserver"),
+var stun = require(__dirname+"/../build/Release/stunserver");
 
 DEFAULT_STUN_PORT = 3478,
 

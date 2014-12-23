@@ -116,6 +116,5 @@ Handle<Value> Authenticator::onNodeAuthCallback(const Arguments& args)
   obj->_isCompleted = true;
   pthread_cond_signal(&obj->_cond);
   obj->response_ = pResponse;
-  Logging::LogMsg(LL_DEBUG,"After problems");
   return scope.Close(Undefined());
 }

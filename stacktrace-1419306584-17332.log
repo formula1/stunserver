@@ -1,0 +1,4 @@
+PID 17332 received SIGSEGV for address: 0x41
+/home/sam/Programming/node_apps/SilkServer/stun-server/node_modules/segfault-handler/build/Release/segfault-handler.node(+0x10e5)[0x7f5128c3c0e5]
+/lib/x86_64-linux-gnu/libpthread.so.0(+0x10340)[0x7f5129214340]
+[0x1929c30]

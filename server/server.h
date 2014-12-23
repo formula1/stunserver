@@ -79,7 +79,7 @@ private:
 
 public:
 
-    HRESULT Initialize(CStunServerConfig& config);
+    HRESULT Initialize(const CStunServerConfig& config);
     HRESULT Shutdown();
 
     HRESULT Start();

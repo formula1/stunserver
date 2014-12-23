@@ -107,7 +107,7 @@ function test_r(curtest,isi){
 }
 test_r({verbosity:1},0);
 
-var stun = require("../build/Release/stunserver");
+var stun = require(__dirname+"/../build/Release/stunserver");
 
 for(var i=0;i<tests.length;i++){
   tests[i]();
