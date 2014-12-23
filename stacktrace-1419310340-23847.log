@@ -1,7 +1,0 @@
-PID 23847 received SIGSEGV for address: 0x0
-/home/sam/Programming/node_apps/SilkServer/stun-server/node_modules/segfault-handler/build/Release/segfault-handler.node(+0x10e5)[0x7f38e570f0e5]
-/lib/x86_64-linux-gnu/libpthread.so.0(+0x10340)[0x7f38e5ce7340]
-/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN8NodeStunC2E17CStunServerConfigN2v86HandleINS1_6ObjectEEE+0x97)[0x7f38e54edad7]
-/home/sam/Programming/node_apps/SilkServer/stun-server/nodejs/build/Release/stunserver.node(_ZN8NodeStun3NewERKN2v89ArgumentsE+0x187)[0x7f38e54edc77]
-node[0x6f857a]
-[0x24d0bec06362]
