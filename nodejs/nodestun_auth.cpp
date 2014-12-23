@@ -36,6 +36,7 @@ NodeStun_Auth::NodeStun_Auth (Handle<Object> stun)
   }
 HRESULT NodeStun_Auth::DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse* pResponse)
 {
+  Logging::LogMsg(LL_VERBOSE, "inside");
   Authenticator auth;
   return auth.SendAndWait(pAuthAttributes, pResponse,server_);
 }

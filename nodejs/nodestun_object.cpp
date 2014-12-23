@@ -17,8 +17,10 @@ NodeStun::NodeStun (CStunServerConfig config, Handle<Object> nt)
   , idler()
   , stunAuth(NULL)
 {
+  stunAuth =  new NodeStun_Auth(NodeThis);
   idler.data = this;
-  stunAuth = new NodeStun_Auth(NodeThis);
+  instance_config_.stunAuth = stunAuth;
+//  stunAuth = new NodeStun_Auth(NodeThis);
 }
 
 NodeStun::~NodeStun() {
@@ -74,6 +76,9 @@ Handle<Value> NodeStun::New(const Arguments& args) {
     }
 
     NodeStun* obj = new NodeStun(config, args.This());
+    if(obj->stunAuth == NULL){
+      ThrowException(Exception::TypeError(String::New("no auth")));
+    }
     obj->Wrap(args.This());
     return args.This();
   } else {
@@ -133,6 +138,7 @@ Handle<Value> NodeStun::Stop(const Arguments& args) {
     obj->instance_server_->Shutdown();
     obj->instance_server_->Release();
     obj->instance_server_ = NULL;
+    uv_idle_stop(&obj->idler);
   }else{
     ThrowException(Exception::TypeError(String::New("server already stopped")));
     return scope.Close(Boolean::New(false));

@@ -8,13 +8,12 @@
 
 
 class Authenticator : public node::ObjectWrap {
-private:
+public:
   bool _isCompleted;
   pthread_cond_t _cond;
   pthread_mutex_t _mutex;
   AuthAttributes request_;
   AuthResponse response_;
-public:
   HRESULT SendAndWait(
   AuthAttributes* request,
   AuthResponse* response,

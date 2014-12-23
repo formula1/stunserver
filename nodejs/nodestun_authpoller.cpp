@@ -69,6 +69,7 @@ HRESULT Authenticator::SendAndWait(
     pthread_cond_wait(&_cond, &_mutex);
   }
   pthread_mutex_unlock(&_mutex);
+  memcpy(response, &response_, sizeof(AuthResponse));
   return S_OK;
 
 }
@@ -114,5 +115,7 @@ Handle<Value> Authenticator::onNodeAuthCallback(const Arguments& args)
   Authenticator* obj = ObjectWrap::Unwrap<Authenticator>(args.This());
   obj->_isCompleted = true;
   pthread_cond_signal(&obj->_cond);
+  obj->response_ = pResponse;
+  Logging::LogMsg(LL_DEBUG,"After problems");
   return scope.Close(Undefined());
 }

@@ -8,8 +8,8 @@
 
 
 class NodeStun_Auth : public IStunAuth, public CBasicRefCount{
-  virtual HRESULT DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse* pResponse);
 public:
+  virtual HRESULT DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse* pResponse);
   NodeStun_Auth(v8::Handle<v8::Object> stun);
   v8::Handle<v8::Object> server_;
   ADDREF_AND_RELEASE_IMPL();
