@@ -18,6 +18,10 @@ NodeStun::NodeStun (CStunServerConfig config, Handle<Object> nt)
   , stunAuth(NULL)
 {
   stunAuth =  new NodeStun_Auth(NodeThis);
+  if (stunAuth == NULL)
+  {
+    ThrowException(Exception::TypeError(String::New("Out of Memory")));
+  }
   idler.data = this;
   instance_config_.stunAuth = stunAuth;
 //  stunAuth = new NodeStun_Auth(NodeThis);

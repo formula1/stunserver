@@ -1,0 +1,48 @@
+var map = {
+  0x0001: "STUN_ATTRIBUTE_MAPPEDADDRESS",
+  0x0002: "STUN_ATTRIBUTE_RESPONSEADDRESS",
+  0x0003: "STUN_ATTRIBUTE_CHANGEREQUEST",
+  0x0004: "STUN_ATTRIBUTE_SOURCEADDRESS",
+  0x0005: "STUN_ATTRIBUTE_CHANGEDADDRESS", // this is the legacy "other address" from rfc 3489, superceded by STUN_ATTRIBUTE_OTHERADDRESS below
+  0x0006: "STUN_ATTRIBUTE_USERNAME",
+  0x0007: "STUN_ATTRIBUTE_LEGACY_PASSWORD", // old rfc
+  0x0008: "STUN_ATTRIBUTE_MESSAGEINTEGRITY",
+  0x0009: "STUN_ATTRIBUTE_ERRORCODE",
+  0x000A: "STUN_ATTRIBUTE_UNKNOWNATTRIBUTES",
+  0x000B: "STUN_ATTRIBUTE_REFLECTEDFROM", // old rfc
+  0x0014: "STUN_ATTRIBUTE_REALM",
+  0x0015: "STUN_ATTRIBUTE_NONCE",
+  0x0020: "STUN_ATTRIBUTE_XORMAPPEDADDRESS",
+  0x0026: "STUN_ATTRIBUTE_PADDING",
+  0x0027: "STUN_ATTRIBUTE_RESPONSE_PORT",
+  0x8022: "STUN_ATTRIBUTE_SOFTWARE",
+  0x8023: "STUN_ATTRIBUTE_ALTERNATESERVER",
+  0x8028: "STUN_ATTRIBUTE_FINGERPRINT",
+  0x802b: "STUN_ATTRIBUTE_RESPONSE_ORIGIN",
+  0x802c: "STUN_ATTRIBUTE_OTHER_ADDRESS",
+
+  // This attribute is sent by the server to legacy clients
+  // 0x8020 is is not defined in any RFC, but is the value that Vovida server uses
+  0x8020: "STUN_ATTRIBUTE_XORMAPPEDADDRESS_OPTIONAL"
+};
+
+function processAttributes(values,next){
+  StunAttribute* pAttrib = NULL;
+  HRESULT hr = S_OK;
+  uint16_t portNBO;
+  uint8_t *pData = NULL;
+
+  var temp = values["STUN_ATTRIBUTE_RESPONSE_PORT"];
+
+  ChkIf(pAttrib->size != STUN_ATTRIBUTE_RESPONSE_PORT_SIZE, E_UNEXPECTED);
+
+  pData = _stream.GetDataPointerUnsafe();
+  ChkIf(pData==NULL, E_UNEXPECTED);
+
+  memcpy(&portNBO, pData + pAttrib->offset, STUN_ATTRIBUTE_RESPONSE_PORT_SIZE);
+  *pPort = ntohs(portNBO);
+  Cleanup:
+  return hr;
+}
+
+module.exports.map = map;

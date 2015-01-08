@@ -1,0 +1,79 @@
+refcountedobject:123 - Attempting to use overloaded = to set the reference object
+
+
+stunsocketthread#360 -processes the input
+CRefCountedBuffer _spBufferReader
+CStunMessageReader _reader - stuncore/stunreader
+StunMessageIn _msgIn
+
+stunsocketthread#369 -processes request
+CStunRequestHandler
+
+stunsocketthread#377 - Sends it back
+CRefCountedBuffer _spBufferOut
+StunMessageOut _msgOut
+http://msdn.microsoft.com/en-us/library/windows/desktop/ms740148%28v=vs.85%29.aspx
+
+
+Process Input
+
+Flow
+-Read header-stuncore/stunreader.cpp#730
+--Read Header-stuncore/stunreader.cpp#544
+---0-2 = Big Endian msgtype
+---2-4 = Big Endian msglength
+---4-20 = TransID
+----convert to ip
+----check if its legacy - !(cookie == 0x2112A442)
+----check if header is valid
+----- 0==(msgType & 0xc000)
+----- 0==(msgLength%4) - msgLength is a multiple of 4
+----- msgLength =< Max Message Size
+----- we allow legacy or the message is not legace
+---Check if msgType is request
+---Check if msgType is indication
+---Check if msgType is success response
+---Check if msgType is error response
+---Else error
+
+
+-Read Body-stuncore/stunreader.cpp#745
+--Too many bytes-error
+--while parsed < available_bytes
+---if(currentattribute)
+----currentattribute.value += available_bytes.splice(0,currentattribute.length - currentattribute.value.length)
+----if(currentattribute.length == currentattribute.value.length)
+-----available_bytes.splice(0,currentattribute.paddingLength)
+-----currentattribute = null
+----continue
+---0-2 = attribute.type - big endian
+---2-4 = attribute.length - big endian
+---if attribute.length > MAX_STUN_ATTRIBUTE_SIZE - error
+---attribute.padding = (4 - attribute.Length % 4)%4
+----if succeeded - add to attributemap
+---if(available_bytes < attribute.length+paddingLength)
+----attribute.value = available_bytes
+----currentattribute = attribute
+----break
+---else
+----attribute.value = available_bytes.splice(0,attribute.length)
+----available_bytes.splice(0,attribute.padding)
+
+
+
+Process Request - stuncore/messagehandler.cpp#77
+-Make sure the message is a request
+-get attributes.responseport-only useful for UDP
+-check if its legacy
+-get padding attribute-stuncore/messagehandler.cpp#232
+-if padding attribute and responseport
+--error(404)
+-get changeRequest attribute - stuncore/stunreader.cpp#362
+--check if its the correct size
+--ChangeIP = !!(changeRequestvalue & 0x0004);
+--ChangePort = !!(changeRequestvalue & 0x0002);
+--if error both are false
+--if(ChangeIP || ChangePort) - stuncore/messagehandler.cpp#250
+---check if !hasAddress or its connection oriented
+----return error
+--

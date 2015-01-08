@@ -36,6 +36,7 @@ HRESULT Authenticator::SendAndWait(
   Handle<Function> sender
 )
 {
+  HandleScope scope;
   _isCompleted = false;
 
   Local<Object> AuthReq = Object::New();

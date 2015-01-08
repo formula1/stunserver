@@ -30,15 +30,39 @@ Do Auth Check:
 using namespace v8;
 
 NodeStun_Auth::NodeStun_Auth (Handle<Object> stun)
-  : server_(stun)
+  : CBasicRefCount(),
+    server_(stun)
   {
-
+    HandleScope scope;
+    this->AddRef();
   }
 HRESULT NodeStun_Auth::DoAuthCheck(AuthAttributes* pAuthAttributes, AuthResponse* pResponse)
 {
-  Logging::LogMsg(LL_VERBOSE, "inside");
+
+  Logging::LogMsg(LL_VERBOSE, "pre locking");
+  if(Locker::IsActive()){
+    Logging::LogMsg(LL_VERBOSE, "locked");
+  }
+  Locker v8Locker;
+  Logging::LogMsg(LL_VERBOSE, "pre scope");
+  HandleScope scope;
+  Handle<ObjectTemplate> global = ObjectTemplate::New();
+  Handle<Context> context = Context::New(NULL, global);
+  Persistent<Context> context_ = Persistent<Context>::New(context);
+
+  Logging::LogMsg(LL_VERBOSE, "pre authenticator");
   Authenticator auth;
-  Handle<Function> fn = Handle<Function>::Cast(server_->Get(String::NewSymbol("doAuth")));
-  Logging::LogMsg(LL_DEBUG,"doauthcheck");
-  return auth.SendAndWait(pAuthAttributes, pResponse,fn);
+  Logging::LogMsg(LL_VERBOSE, "pre register symbol");
+  Local<String> sym = String::New("doAuth");
+  Logging::LogMsg(LL_VERBOSE, "pre get value");
+  Local<Value> val = server_->Get(sym);
+  Logging::LogMsg(LL_VERBOSE, "pre cast fn");
+  Handle<Function> fn = Handle<Function>::Cast(val);
+  Logging::LogMsg(LL_DEBUG,"pre send and wait");
+  HRESULT ret = auth.SendAndWait(pAuthAttributes, pResponse,fn);
+  context_.Dispose();
+  return ret;
 }
+
+//int NodeStun_Auth::AddRef(){return InternalAddRef();}
+//int NodeStun_Auth::Release(){return InternalRelease();}
